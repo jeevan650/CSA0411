@@ -1,0 +1,64 @@
+#include <stdio.h>
+#define MAX 100
+
+int main() {
+    int n, i, completed = 0, current_time = 0, prev = -1;
+    int burst_time[MAX], priority[MAX], remaining_time[MAX], waiting_time[MAX] = {0}, turnaround_time[MAX];
+    int is_completed[MAX] = {0};
+    int highest_priority, process_index;
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter burst time and priority (lower number = higher priority):\n");
+    for (i = 0; i < n; i++) {
+        printf("Process %d burst time: ", i + 1);
+        scanf("%d", &burst_time[i]);
+        printf("Process %d priority: ", i + 1);
+        scanf("%d", &priority[i]);
+        remaining_time[i] = burst_time[i];
+    }
+
+    while (completed != n) {
+        highest_priority = 100000;
+        process_index = -1;
+        for (i = 0; i < n; i++) {
+            if (!is_completed[i] && priority[i] < highest_priority && remaining_time[i] > 0) {
+                highest_priority = priority[i];
+                process_index = i;
+            }
+        }
+
+        if (process_index == -1) {
+            current_time++;
+            continue;
+        }
+
+        if (prev != process_index) {
+            prev = process_index;
+        }
+
+        remaining_time[process_index]--;
+        current_time++;
+
+        if (remaining_time[process_index] == 0) {
+            is_completed[process_index] = 1;
+            completed++;
+            turnaround_time[process_index] = current_time;
+            waiting_time[process_index] = turnaround_time[process_index] - burst_time[process_index];
+            if (waiting_time[process_index] < 0) waiting_time[process_index] = 0;
+        }
+    }
+
+    int total_wt = 0, total_tat = 0;
+    printf("\nProcess\tPriority\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (i = 0; i < n; i++) {
+        total_wt += waiting_time[i];
+        total_tat += turnaround_time[i];
+        printf("P%d\t\t%d\t\t%d\t\t%d\t\t%d\n", i+1, priority[i], burst_time[i], waiting_time[i], turnaround_time[i]);
+    }
+    printf("\nAverage Waiting Time = %.2f\n", (float)total_wt / n);
+    printf("Average Turnaround Time = %.2f\n", (float)total_tat / n);
+
+    return 0;
+}
