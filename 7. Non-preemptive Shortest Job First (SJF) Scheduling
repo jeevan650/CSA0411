@@ -1,0 +1,51 @@
+#include <stdio.h>
+#define MAX 100
+
+int main() {
+    int n, i, completed = 0, current_time = 0;
+    int burst_time[MAX], waiting_time[MAX] = {0}, turnaround_time[MAX];
+    int is_completed[MAX] = {0};
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter burst time for each process:\n");
+    for (i = 0; i < n; i++) {
+        printf("Process %d burst time: ", i + 1);
+        scanf("%d", &burst_time[i]);
+    }
+
+    while (completed != n) {
+        int idx = -1;
+        int min_bt = 100000;
+
+        for (i = 0; i < n; i++) {
+            if (!is_completed[i] && burst_time[i] < min_bt) {
+                min_bt = burst_time[i];
+                idx = i;
+            }
+        }
+
+        if (idx != -1) {
+            waiting_time[idx] = current_time;
+            current_time += burst_time[idx];
+            turnaround_time[idx] = current_time;
+            is_completed[idx] = 1;
+            completed++;
+        }
+    }
+
+    int total_wt = 0, total_tat = 0;
+    printf("\nProcess\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (i = 0; i < n; i++) {
+        waiting_time[i] = turnaround_time[i] - burst_time[i];
+        total_wt += waiting_time[i];
+        total_tat += turnaround_time[i];
+        printf("P%d\t\t%d\t\t%d\t\t%d\n", i + 1, burst_time[i], waiting_time[i], turnaround_time[i]);
+    }
+
+    printf("\nAverage Waiting Time = %.2f\n", (float)total_wt / n);
+    printf("Average Turnaround Time = %.2f\n", (float)total_tat / n);
+
+    return 0;
+}
