@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_FILES 100
+#define MAX_NAME 50
+
+typedef struct {
+    char filename[MAX_NAME];
+    int filesize;
+} File;
+
+File directory[MAX_FILES];
+int file_count = 0;
+
+void createFile(char* name, int size) {
+    if (file_count < MAX_FILES) {
+        strcpy(directory[file_count].filename, name);
+        directory[file_count].filesize = size;
+        file_count++;
+        printf("File '%s' created.\n", name);
+    } else {
+        printf("Directory full.\n");
+    }
+}
+
+void displayFiles() {
+    printf("Files in directory:\n");
+    for (int i = 0; i < file_count; i++) {
+        printf("Filename: %s, Size: %d\n", directory[i].filename, directory[i].filesize);
+    }
+}
+
+int main() {
+    createFile("file1.txt", 100);
+    createFile("file2.txt", 200);
+    displayFiles();
+
+    return 0;
+}
