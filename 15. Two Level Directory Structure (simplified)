@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_FILES 100
+#define MAX_DIRS 10
+#define MAX_NAME 50
+
+typedef struct {
+    char filename[MAX_NAME];
+    int filesize;
+} File;
+
+typedef struct {
+    char dirname[MAX_NAME];
+    File files[MAX_FILES];
+    int file_count;
+} Directory;
+
+Directory directories[MAX_DIRS];
+int dir_count = 0;
+
+void createDirectory(char* name) {
+    if (dir_count < MAX_DIRS) {
+        strcpy(directories[dir_count].dirname, name);
+        directories[dir_count].file_count = 0;
+        dir_count++;
+        printf("Directory '%s' created.\n", name);
+    } else {
+        printf("Max directories reached.\n");
+    }
+}
+
+void createFile(char* dirname, char* filename, int filesize) {
+    for (int i = 0; i < dir_count; i++) {
+        if (strcmp(directories[i].dirname, dirname) == 0) {
+            if (directories[i].file_count < MAX_FILES) {
+                strcpy(directories[i].files[directories[i].file_count].filename, filename);
+                directories[i].files[directories[i].file_count].filesize = filesize;
+                directories[i].file_count++;
+                printf("File '%s' created in directory '%s'.\n", filename, dirname);
+                return;
+            } else {
+                printf("Directory '%s' is full.\n", dirname);
+                return;
+            }
+        }
+    }
+    printf("Directory '%s' not found.\n", dirname);
+}
+
+void displayFiles(char* dirname) {
+    for (int i = 0; i < dir_count; i++) {
+        if (strcmp(directories[i].dirname, dirname) == 0) {
+            printf("Files in directory '%s':\n", dirname);
+            for (int j = 0; j < directories[i].file_count; j++) {
+                printf("Filename: %s, Size: %d\n",
+                    directories[i].files[j].filename,
+                    directories[i].files[j].filesize);
+            }
+            return;
+        }
+    }
+    printf("Directory '%s' not found.\n", dirname);
+}
+
+int main() {
+    createDirectory("docs");
+    createDirectory("images");
+
+    createFile("docs", "file1.txt", 100);
+    createFile("docs", "file2.txt", 200);
+    createFile("
